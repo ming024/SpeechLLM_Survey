@@ -49,7 +49,7 @@ def postprocess_text(text, separators, regex_patterns):
             split_list = [e for e in re.split(sep, text) if e != '']
             text = split_list[split_id] if len(split_list) > 0 else ''
         else:
-            # If split_id not specified, then get the first element
+            # If split_id not specified, get the first element
             if sep in text:
                 text = text.partition(sep)[0]
 
@@ -150,7 +150,7 @@ def main(
             ]
         else:
             # For Qwen-Audio only
-            if "slu" not in task:
+            if "asr" in task or 'st' in task:
                 separators += [(r'<.*>', -1)]
 
     # For any model
@@ -171,6 +171,12 @@ def main(
 
     if "slue-voxceleb" in eval_dataset:
         classes = ["Positive", "Neutral", "Negative"]
+    elif "dynamic_superb_sarcasm" in eval_dataset:
+        classes = ["True", "False"]
+    elif "dynamic_superb_emotion" in eval_dataset:
+        classes = ["Anger", "Disgust", "Sadness", "Joy", "Neutral", "Surprise", "Fear"]
+    elif "dynamic_superb_dialogue_emotion" in eval_dataset:
+        classes = ["Anger", "Disgust", "Fear", "Sadness", "Happiness", "Surprise", "No emotion"]
 
     output_texts = []
     ref_texts = []

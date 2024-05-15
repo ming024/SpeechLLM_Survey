@@ -4,7 +4,6 @@ import torch
 import fire
 from tqdm import tqdm
 from transformers import AutoModelForSpeechSeq2Seq, AutoProcessor, pipeline
-from datasets import load_dataset
 
 
 device = "cuda:0" if torch.cuda.is_available() else "cpu"

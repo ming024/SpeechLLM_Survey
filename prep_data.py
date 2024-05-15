@@ -55,7 +55,7 @@ def format_data(audio_id, audio_path, task, model, dataset, text, src_lang, tgt_
                     "output": f"Spoken text: {text}",
                 }
             )
-        elif task in ['slu-sa', 'slu-summ', 'slu-dac']:
+        elif task in ['slu-sa', 'slu-summ', 'slu-dac', 'dynamic_superb-classification']:
             assert instruction != '', "Please specify the instruction to be used in this task."
             output_dict.update(
                 {
@@ -98,7 +98,7 @@ def format_data(audio_id, audio_path, task, model, dataset, text, src_lang, tgt_
                     output_dict["instruction"] = "英語のスピーチを聞いて日本語に訳す"
                 else:
                     output_dict["instruction"] = "スピーチを聞き、日本語に訳す"
-        elif task in ['slu-sa', 'slu-summ', 'slu-dac']:
+        elif task in ['slu-sa', 'slu-summ', 'slu-dac', 'dynamic_superb-classification']:
             assert instruction != '', "Please specify the instruction to be used in this task."
             output_dict.update(
                 {
@@ -135,7 +135,7 @@ def format_data(audio_id, audio_path, task, model, dataset, text, src_lang, tgt_
                     "target_text": text[1],
                 }
             )
-        elif task in ['slu-sa', 'slu-summ', 'slu-dac']:
+        elif task in ['slu-sa', 'slu-summ', 'slu-dac', 'dynamic_superb-classification']:
             assert instruction != '', "Please specify the instruction to be used in this task."
             output_dict.update(
                 {
@@ -173,7 +173,7 @@ def format_data(audio_id, audio_path, task, model, dataset, text, src_lang, tgt_
                     "target_text": text[1],
                 }
             )
-        elif task in ['slu-sa', 'slu-summ', 'slu-dac']:
+        elif task in ['slu-sa', 'slu-summ', 'slu-dac', 'dynamic_superb-classification']:
             assert instruction != '', "Please specify the instruction to be used in this task."
             output_dict.update(
                 {
@@ -215,7 +215,7 @@ def format_data(audio_id, audio_path, task, model, dataset, text, src_lang, tgt_
                     "with_speech": True,
                 } 
             )
-        elif task in ['slu-sa', 'slu-summ', 'slu-dac']:
+        elif task in ['slu-sa', 'slu-summ', 'slu-dac', 'dynamic_superb-classification']:
             assert instruction != '', "Please specify the instruction to be used in this task."
             output_dict.update(
                 {
@@ -246,7 +246,7 @@ def format_data(audio_id, audio_path, task, model, dataset, text, src_lang, tgt_
                     "target_text": text[1],
                 } 
             )
-        elif task in ['slu-sa', 'slu-summ', 'slu-dac']:
+        elif task in ['slu-sa', 'slu-summ', 'slu-dac', 'dynamic_superb-classification']:
             output_dict.update(
                 {
                     "src_lang": LANGUAGES[src_lang].capitalize(),
@@ -268,40 +268,39 @@ def format_data(audio_id, audio_path, task, model, dataset, text, src_lang, tgt_
             raise NotImplementedError
     return output_dict
 
-def main(input, task, model, dataset, output_json, src_lang=None, tgt_lang=None, specify_src_lang=False, instruction='', separators=''):
-    scps = read_file(os.path.join(input, "wav.scp"))
-    if task == "asr":
-        if src_lang is None: 
-            if dataset == 'mls':
-                # Get src_lang and tgt_lang from the name of the input directory
-                src_lang = input.strip('/').split('/')[-1].split('_')[1]
-            elif dataset == 'librispeech' or dataset == 'tedlium2':
-                src_lang = 'en'
-        tgt_lang = src_lang
-        texts = read_file(os.path.join(input, "text"))
-    elif task == "st":
-        if src_lang is None or tgt_lang is None: 
-            if dataset == 'CoVoST-2':
-                # Get src_lang and tgt_lang from the name of the input directory
-                languages = input.strip('/').split('/')[-1].split('.')[-1].split('-')
-                languages = [l for l in languages if l in LANGUAGES]
-                assert len(languages) == 2
-                src_lang, tgt_lang = languages
-            else:
-                raise Exception("src_lang and tgt_lang should be specified.")
-        source_texts = read_file(os.path.join(input, f"text.lc.rm.{src_lang}"))
-        target_texts = read_file(os.path.join(input, f"text.lc.rm.{tgt_lang}"))
-        texts = []
-        for (id_s, text_s), (id_t, text_t) in zip(source_texts, target_texts):
-            assert id_s == id_t, f"File IDs in the source and target text files do not match {id_s}, {id_t}"
-            texts.append((id_s, (text_s, text_t)))
-    else:
-        tgt_lang = src_lang = 'en'
-    if "slu" in task:
-        texts = read_file(os.path.join(input, "text"))
+def main(input, split, input_format, task, model, dataset, output_json, dump_dir=None, src_lang=None, tgt_lang=None, specify_src_lang=False, instruction='', separators=''):
+    if input_format == 'espnet':
+        scps = read_file(os.path.join(input, split, "wav.scp"))
+        if task == "asr":
+            if src_lang is None: 
+                if dataset == 'mls':
+                    # Get src_lang and tgt_lang from the name of the input directory
+                    src_lang = split.split('_')[1]
+                elif dataset == 'librispeech' or dataset == 'tedlium2':
+                    src_lang = 'en'
+            tgt_lang = src_lang
+            texts = read_file(os.path.join(input, split, "text"))
+        elif task == "st":
+            if src_lang is None or tgt_lang is None: 
+                if dataset == 'CoVoST-2':
+                    # Get src_lang and tgt_lang from the name of the test split
+                    languages = split.split('.')[-1].split('-')
+                    languages = [l for l in languages if l in LANGUAGES]
+                    assert len(languages) == 2
+                    src_lang, tgt_lang = languages
+                else:
+                    raise Exception("src_lang and tgt_lang should be specified.")
+            source_texts = read_file(os.path.join(input, split, f"text.lc.rm.{src_lang}"))
+            target_texts = read_file(os.path.join(input, split, f"text.lc.rm.{tgt_lang}"))
+            texts = []
+            for (id_s, text_s), (id_t, text_t) in zip(source_texts, target_texts):
+                assert id_s == id_t, f"File IDs in the source and target text files do not match {id_s}, {id_t}"
+                texts.append((id_s, (text_s, text_t)))
+        else:
+            tgt_lang = src_lang = 'en'
+        if "slu" in task:
+            texts = read_file(os.path.join(input, split, "text"))
     
-    os.makedirs(os.path.dirname(output_json), exist_ok=True)
-    with open(output_json, 'w') as of:
         output_list = []
         for (id_scp, audio_path), (id_text, text) in zip(scps, texts):
             assert id_scp == id_text, f"File IDs in the scp and text files do not match {id_scp}, {id_text}"
@@ -323,7 +322,32 @@ def main(input, task, model, dataset, output_json, src_lang=None, tgt_lang=None,
 
             output_dict = format_data(id_scp, audio_path, task, model, dataset, text, src_lang, tgt_lang, instruction=instruction, instruction_modifier=instruction_modifier, separators=separators.split())
             output_list.append(output_dict)
+    elif input_format == 'dynamic_superb':
+        tgt_lang = src_lang = 'en'
+        assert dump_dir is not None, "dump_dir must be specified for dynamic_superb datasets"
+        os.makedirs(dump_dir, exist_ok=True)
+
+        from datasets import load_dataset
+        from scipy.io.wavfile import write
+        import numpy as np
+
+        dset = load_dataset(input, split=split)
+        output_list = []
+        for item in dset:
+            id_ = item['file'].split('.')[0]
+            audio, sampling_rate = item['audio']['array'], item['audio']['sampling_rate']
+            audio_path = os.path.join(dump_dir, item['file'])
+            instruction = item['instruction']
+            text = str(item['label'])
+            write(audio_path, sampling_rate, audio.astype(np.float32))
+
+            output_dict = format_data(id_, audio_path, task, model, dataset, text, src_lang, tgt_lang, instruction=instruction)
+            output_list.append(output_dict)
+    else:
+        raise NotImplementedError
         
+    os.makedirs(os.path.dirname(output_json), exist_ok=True)
+    with open(output_json, 'w') as of:
         if output_json.endswith(".json"):
             of.write(json.dumps(output_list, indent=4))
         elif output_json.endswith(".jsonl"):
@@ -348,12 +372,23 @@ if __name__ == "__main__":
     parser.add_argument(
         "--input",
         type=str,
-        help="Path to the preprocessed espnet-format data that contains wav.scp and text",
+        help="Path to the preprocessed espnet-format data that contains wav.scp and text, or HuggingFace dataset ID to DynamicSuperb datasets",
+    )
+    parser.add_argument(
+        "--split",
+        type=str,
+        help="Dataset split",
+    )
+    parser.add_argument(
+        "--input_format",
+        type=str,
+        choices=['espnet', 'dynamic_superb'],
+        help="Data format",
     )
     parser.add_argument(
         "--task",
         type=str,
-        choices=['asr', 'st', 'slu-sa', 'slu-summ', 'slu-sqa', 'slu-dac'],
+        choices=['asr', 'st', 'slu-sa', 'slu-summ', 'slu-sqa', 'dynamic_superb-classification'],
         help="Task to solve",
     )
     parser.add_argument(
@@ -365,13 +400,18 @@ if __name__ == "__main__":
     parser.add_argument(
         "--dataset",
         type=str,
-        choices=['librispeech', 'tedlium2', 'mls', 'CoVoST-2', 'slue-voxceleb', 'slue-ted', 'slue-sqa-5', 'slue-hvb'],
+        choices=['librispeech', 'tedlium2', 'mls', 'CoVoST-2', 'slue-voxceleb', 'slue-ted', 'slue-sqa-5', 'slue-hvb', 'dynamic_superb_sarcasm', 'dynamic_superb_emotion', 'dynamic_superb_dialogue_emotion'],
         help="Dataset used for evaluation",
     )
     parser.add_argument(
         "--output_json",
         type=str,
         help="Path to save the output json file",
+    )
+    parser.add_argument(
+        "--dump_dir",
+        type=str,
+        help="Directory to save audio data. Only used for Dynamic Superb datasets",
     )
     parser.add_argument(
         "--src_lang",
