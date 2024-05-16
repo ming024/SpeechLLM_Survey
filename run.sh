@@ -187,9 +187,17 @@ for split in ${splits}; do
 
     echo "Post-processing LLM outputs"
     if [[ "$model" == "wavllm" ]]; then
-        python3 post_process_text.py --eval_dataset $output_name --task $task  --output_dir $output_dir  --save_ref $save_ref --eval_data_tsv ${data_json_dir}/${output_name}.tsv --result_file_format $result_file_format
+        source ~/.bashrc
+        conda activate whisper-llama
+        python3 post_process_text.py --eval_dataset $output_name --task $task  --output_dir $output_dir  --save_ref $save_ref --eval_data_file ${data_json_dir}/${output_name}.tsv --result_file_format $result_file_format --use_llama true
+    elif [[ "$model" == "whisper-llama" ]]; then
+        source ~/.bashrc
+        conda activate whisper-llama
+        python3 post_process_text.py --eval_dataset $output_name --task $task  --output_dir $output_dir  --save_ref $save_ref --eval_data_file ${data_json_dir}/${output_name}.json --result_file_format $result_file_format --use_llama true
     else
-        python3 post_process_text.py --eval_dataset $output_name --task $task  --output_dir $output_dir  --save_ref $save_ref --result_file_format $result_file_format
+        source ~/.bashrc
+        conda activate whisper-llama
+        python3 post_process_text.py --eval_dataset $output_name --task $task  --output_dir $output_dir  --save_ref $save_ref --result_file_format $result_file_format --use_llama true
     fi
 
 

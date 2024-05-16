@@ -1,3 +1,7 @@
 git+https://github.com/huggingface/transformers.git 
 accelerate 
 datasets
+pandas
+fire
+numpy
+tqdm
