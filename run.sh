@@ -3,7 +3,7 @@ model=$1
 data_dir=$2 # eval_data/salmonn
 dset=$3
 specify_src_lang=$4
-espnet_root=/ocean/projects/cis210027p/cchien1/espnet/
+espnet_root=
 data_file_format=json
 result_file_format=json
 

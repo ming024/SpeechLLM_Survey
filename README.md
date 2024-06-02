@@ -27,6 +27,8 @@ Add files in ``addons/*/`` to ``models/*/``
 Please follow [ESP-Net data pre-processing steps](https://github.com/espnet/espnet/tree/master/egs2) to pre-process the speech data into Kaldi formats (i.e., with the .scp files).
 
 ## Change environment-specific setups
+Change ``input_path`` in ``prep_data.sh`` to your pre-processed data in ESP-Net format.
+
 Change ``espnet_root`` in ``run.sh`` to the path of the installed ESP-Net package.
 
 Change ``_data`` in ``eval_results/eval_xxx.sh``  to the path of your preprocessed data (in ESP-Net format).

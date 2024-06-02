@@ -15,31 +15,31 @@ if [[ "$dset" == "librispeech" ]]; then
     espnet_task=asr2
     task=asr
     input_format=espnet
-    input_path=/ocean/projects/cis210027p/cchien1/espnet/egs2/${dset}/${espnet_task}/dump/audio_raw/
+    input_path=
 elif [[ "$dset" == "tedlium2" ]]; then
     splits="test "
     espnet_task=asr1
     task=asr
     input_format=espnet
-    input_path=/ocean/projects/cis210027p/cchien1/espnet/egs2/${dset}/${espnet_task}/dump/raw/
+    input_path=
 elif [[ "$dset" == "mls" ]]; then
     splits="mls_fr_test mls_nl_test mls_pt_test mls_de_test mls_es_test mls_it_test mls_pl_test"
     espnet_task=asr2
     task=asr
     input_format=espnet
-    input_path=/ocean/projects/cis210027p/cchien1/espnet/egs2/${dset}/${espnet_task}/dump/audio_raw/
+    input_path=
 elif [[ "$dset" == "CoVoST-2" ]]; then
     splits="test.ca-en test.en-ar test.en-cy test.en-et test.en-id test.en-lv test.en-sl test.en-ta test.en-zh-CN test.fr-en test.zh-CN-en test.de-en test.en-ca test.en-de test.en-fa test.en-ja test.en-mn test.en-sv-SE test.en-tr test.es-en test.ja-en"
     espnet_task=st1
     task=st
     input_format=espnet
-    input_path=/ocean/projects/cis210027p/pyf98/OWSM_test/${dset}/
+    input_path=
 elif [[ "$dset" == "slue-voxceleb" ]]; then
     splits="test "
     espnet_task=slu1
     task=slu-sa
     input_format=espnet
-    input_path=/ocean/projects/cis210027p/shared/corpora/slue-perb_test/${dset}/
+    input_path=
     instructions=("Can you identify the sentiment of the speech as being \"positive,\" \"neutral,\" or \"negative\"?"
     "Determine the sentiment of the speech as either \"positive,\" \"neutral,\" or \"negative\"."
     "Analyze the sentiment of the speech and classify it as \"positive,\" \"neutral,\" or \"negative\"."
@@ -51,7 +51,7 @@ elif [[ "$dset" == "slue-ted" ]]; then
     espnet_task=slu1
     task=slu-summ
     input_format=espnet
-    input_path=/ocean/projects/cis210027p/shared/corpora/slue-perb_test/${dset}/
+    input_path=
     instructions=("Write a short summary for this speech."
     "Briefly summarize this speech."
     "What is a summary of this speech?" # Instruction 1, 2, and 3 are FLAN T-5 prompts
@@ -63,7 +63,7 @@ elif [[ "$dset" == "slue-sqa-5" ]]; then
     espnet_task=slu1
     task=slu-sqa
     input_format=espnet
-    input_path=/ocean/projects/cis210027p/shared/corpora/slue-perb_test/${dset}/
+    input_path=
     opts=(--separators "SEP ANS")
 fi
 
