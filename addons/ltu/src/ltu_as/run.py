@@ -57,10 +57,10 @@ def load_audio_trans(filename, whisper_feat_model):
 
 def main(
     load_8bit: bool = False,
-    base_model: str = "../../pretrained_mdls/vicuna_ltuas",
-    espnet_root: str = "/ocean/projects/cis210027p/cchien1/espnet/egs2/ltu_as",
-    eval_mdl_path: str = "../../pretrained_mdls/ltuas_long_noqa_a6.bin",
-    whisper_feat_mdl_path: str = "../../pretrained_mdls/large-v1.pt",
+    base_model: str = "",
+    espnet_root: str = "",
+    eval_mdl_path: str = "",
+    whisper_feat_mdl_path: str = "",
     eval_json_path: str = "",
     prompt_template: str = "alpaca_short",
     task: str = "",

@@ -48,7 +48,7 @@ fi
 log "Scoring"
 
 for dset in ${test_sets}; do
-    _data="/ocean/projects/cis210027p/shared/corpora/slue-perb_test/${dataset_name}/$(cut -d'.' -f1 <<<${dset})"
+    _data="${espnet_root}/egs2/${dataset_name}/$(cut -d'.' -f1 <<<${dset})"
     _dir="./${dataset_name}_${dset}"
 
     if [ "${task}" = slu-sa ]; then

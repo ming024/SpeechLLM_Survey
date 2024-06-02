@@ -52,7 +52,7 @@ fi
 log "Scoring"
 
 for dset in ${test_sets}; do
-    _data="/ocean/projects/cis210027p/pyf98/OWSM_test/${dataset_name}/${dset}"
+    _data="${espnet_root}/egs2/${dataset_name}/${dset}"
     _dir="./${dataset_name}_${dset}"
 
     # TODO(jiatong): add asr scoring and inference

@@ -49,7 +49,7 @@ log "Scoring"
 
 _dsets="${test_sets}"
 for dset in ${_dsets}; do
-    _data="/ocean/projects/cis210027p/cchien1/espnet/egs2/${dataset_name}/${task}/dump"
+    _data="${espnet_root}/egs2/${dataset_name}/${task}/dump"
     if [ -e "${_data}/audio_raw" ]; then
         _data="${_data}/audio_raw"
     elif [ -e "${_data}/extracted" ]; then
