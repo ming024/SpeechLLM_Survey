@@ -102,22 +102,6 @@ elif [[ "$dset" == "slue-sqa-5" ]]; then
     task=slu-sqa
     # We need to save reference text for SQA evaluation
     save_ref=true
-elif [[ "$dset" == "dynamic_superb_sarcasm" ]]; then
-    splits="test "
-    espnet_task=slu1
-    task=dynamic_superb-classification
-    # We need to save reference text for Dynamic Superb evaluation
-    save_ref=true
-elif [[ "$dset" == "dynamic_superb_emotion" ]]; then
-    splits="test "
-    espnet_task=slu1
-    task=dynamic_superb-classification
-    save_ref=true
-elif [[ "$dset" == "dynamic_superb_dialogue_emotion" ]]; then
-    splits="test "
-    espnet_task=slu1
-    task=dynamic_superb-classification
-    save_ref=true
 fi
 
 
@@ -169,8 +153,6 @@ for split in ${splits}; do
         tgt_lang="$(cut -d'-' -f2 <<<${src_tgt})"
         score_opts=(--dataset_name $dset --src_lang $src_lang --tgt_lang $tgt_lang --test_sets $split)
     elif [[ "$task" == *"slu"* ]]; then
-        score_opts=(--dataset_name $dset  --task $task --test_sets "${split}")
-    elif [[ "$task" == "dynamic_superb-classification" ]]; then
         score_opts=(--dataset_name $dset  --task $task --test_sets "${split}")
     fi
 

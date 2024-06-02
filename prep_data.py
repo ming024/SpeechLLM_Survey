@@ -231,27 +231,6 @@ def main(input, split, input_format, task, model, dataset, output_json, dump_dir
 
             output_dict = format_data(id_scp, audio_path, task, model, dataset, text, src_lang, tgt_lang, instruction=instruction, instruction_modifier=instruction_modifier, separators=separators.split())
             output_list.append(output_dict)
-    elif input_format == 'dynamic_superb':
-        tgt_lang = src_lang = 'en'
-        assert dump_dir is not None, "dump_dir must be specified for dynamic_superb datasets"
-        os.makedirs(dump_dir, exist_ok=True)
-
-        from datasets import load_dataset
-        from scipy.io.wavfile import write
-        import numpy as np
-
-        dset = load_dataset(input, split=split)
-        output_list = []
-        for item in dset:
-            id_ = item['file'].split('.')[0]
-            audio, sampling_rate = item['audio']['array'], item['audio']['sampling_rate']
-            audio_path = os.path.join(dump_dir, item['file'])
-            instruction = item['instruction']
-            text = str(item['label'])
-            write(audio_path, sampling_rate, audio.astype(np.float32))
-
-            output_dict = format_data(id_, audio_path, task, model, dataset, text, src_lang, tgt_lang, instruction=instruction)
-            output_list.append(output_dict)
     else:
         raise NotImplementedError
         
@@ -281,7 +260,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--input",
         type=str,
-        help="Path to the preprocessed espnet-format data that contains wav.scp and text, or HuggingFace dataset ID to DynamicSuperb datasets",
+        help="Path to the preprocessed espnet-format data that contains wav.scp and text",
     )
     parser.add_argument(
         "--split",

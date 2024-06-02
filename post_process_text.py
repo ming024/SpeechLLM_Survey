@@ -206,12 +206,6 @@ def main(
 
     if "slue-voxceleb" in eval_dataset:
         classes = ["Positive", "Neutral", "Negative"]
-    elif "dynamic_superb_sarcasm" in eval_dataset:
-        classes = ["True", "False"]
-    elif "dynamic_superb_emotion" in eval_dataset:
-        classes = ["Anger", "Disgust", "Sadness", "Joy", "Neutral", "Surprise", "Fear"]
-    elif "dynamic_superb_dialogue_emotion" in eval_dataset:
-        classes = ["Anger", "Disgust", "Fear", "Sadness", "Happiness", "Surprise", "No emotion"]
 
     output_texts = []
     ref_texts = []

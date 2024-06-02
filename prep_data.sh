@@ -65,24 +65,6 @@ elif [[ "$dset" == "slue-sqa-5" ]]; then
     input_format=espnet
     input_path=/ocean/projects/cis210027p/shared/corpora/slue-perb_test/${dset}/
     opts=(--separators "SEP ANS")
-elif [[ "$dset" == "dynamic_superb_sarcasm" ]]; then
-    splits="test "
-    task=dynamic_superb-classification
-    input_format=dynamic_superb
-    input_path=DynamicSuperb/SarcasmDetection_Mustard
-    opts=(--dump_dir "${PWD}/downloads/${dset}/")
-elif [[ "$dset" == "dynamic_superb_emotion" ]]; then
-    splits="test "
-    task=dynamic_superb-classification
-    input_format=dynamic_superb
-    input_path=DynamicSuperb/EmotionRecognition_MultimodalEmotionlinesDataset
-    opts=(--dump_dir "${PWD}/downloads/${dset}/")
-elif [[ "$dset" == "dynamic_superb_dialogue_emotion" ]]; then
-    splits="test "
-    task=dynamic_superb-classification
-    input_format=dynamic_superb
-    input_path=DynamicSuperb/DialogueEmotionClassification_DailyTalk
-    opts=(--dump_dir "${PWD}/downloads/${dset}/")
 fi
 
 
