@@ -25,27 +25,6 @@ def read_result_file(file, file_format, eval_data_file):
         else:
             eval_data = None
 
-    elif file_format == "txt":
-        # For WavLLM outputs
-        data = []
-        with open(file, 'r') as f:
-            for line1 in f:
-                try:
-                    line2 = next(f)
-                except:
-                    break
-                data.append(
-                    {
-                        "ref": line1.split('\t')[1].strip('\n'),
-                        "pred": line2.split('\t')[2].strip('\n').strip('\'').strip('\"'),
-                    }
-                )
-        
-        # Read audio_id from eval_data_file since it is not included in the output format of WavLLM
-        assert eval_data_file != ""
-        eval_data = pd.read_csv(eval_data_file, sep='\t', quoting=csv.QUOTE_NONE).transpose().to_dict()
-        eval_data = [eval_data[i] for i in range(len(eval_data))]
-
     if eval_data is not None:
         assert len(data) == len(eval_data)
         for i in range(len(eval_data)):

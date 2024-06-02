@@ -5,13 +5,7 @@ opts=
 
 
 # Data formats depend on models
-if [[ "$model" == "wavllm" ]]; then
-    output_file_format=tsv
-elif [[ "$model" == "bestow" ]]; then
-    output_file_format=jsonl
-else
-    output_file_format=json
-fi
+output_file_format=json
 
 
 

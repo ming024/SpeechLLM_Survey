@@ -151,90 +151,6 @@ def format_data(audio_id, audio_path, task, model, dataset, text, src_lang, tgt_
                     "output": text.split(separators[1])[1].strip(),
                 }
             )
-    elif model == 'bestow':
-        output_dict["audio_filepath"] = output_dict.pop("audio_path")
-        if task == 'asr':
-            assert instruction == '', "A fixed instruction should be used in this task."
-            output_dict.update(
-                {
-                    "question": f"Transcribe the spoken content to written{instruction_modifier} text, ignoring punctuations and capitalization",
-                    "text": text,
-                    "duration": 0.0,
-                } 
-            )
-        elif task == 'st':
-            assert instruction == '', "A fixed instruction should be used in this task."
-            output_dict.update(
-                {
-                    "question": f"Translate the spoken{instruction_modifier} content to written {LANGUAGES[tgt_lang].capitalize()} text, with punctuations and capitalizations",
-                    "text": text[1],
-                    "duration": 0.0,
-                    "source_text": text[0],
-                    "target_text": text[1],
-                }
-            )
-        elif task in ['slu-sa', 'slu-summ', 'slu-dac', 'dynamic_superb-classification']:
-            assert instruction != '', "Please specify the instruction to be used in this task."
-            output_dict.update(
-                {
-                    "question": instruction,
-                    "text": text,
-                    "duration": 0.0,
-                }
-            )
-        elif task in ['slu-sqa']:
-            assert separators != [], "Please specify the separator to be used in this task."
-            output_dict.update(
-                {
-                    "question": text.split(separators[0])[0].strip(),
-                    "text": text.split(separators[1])[1].strip(),
-                    "duration": 0.0,
-                }
-            )
-    elif model == 'wavllm':
-        output_dict["audio"] = output_dict.pop("audio_path")
-        if task == 'asr':
-            assert instruction == '', "A fixed instruction should be used in this task."
-            output_dict.update(
-                {
-                    "prompt": f"Based on the attached audio, generate a comprehensive text transcription of the spoken content{instruction_modifier}.",
-                    "tgt_text": text,
-                    "n_frames": -1,
-                    "with_speech": True,
-                } 
-            )
-        elif task == 'st':
-            assert instruction == '', "A fixed instruction should be used in this task."
-            output_dict.update(
-                {
-                    "prompt": f"Translate the audio clip{instruction_modifier} into {LANGUAGES[tgt_lang].capitalize()}.",
-                    "tgt_text": text[1],
-                    "source_text": text[0],
-                    "target_text": text[1],
-                    "n_frames": -1,
-                    "with_speech": True,
-                } 
-            )
-        elif task in ['slu-sa', 'slu-summ', 'slu-dac', 'dynamic_superb-classification']:
-            assert instruction != '', "Please specify the instruction to be used in this task."
-            output_dict.update(
-                {
-                    "prompt": instruction,
-                    "tgt_text": text,
-                    "n_frames": -1,
-                    "with_speech": True,
-                }
-            )
-        elif task in ['slu-sqa']:
-            assert separators != [], "Please specify the separator to be used in this task."
-            output_dict.update(
-                {
-                    "prompt": text.split(separators[0])[0].strip(),
-                    "tgt_text": text.split(separators[1])[1].strip(),
-                    "n_frames": -1,
-                    "with_speech": True,
-                }
-            )
     elif model == 'whisper':
         if task == 'st':
             output_dict.update(
@@ -312,13 +228,6 @@ def main(input, split, input_format, task, model, dataset, output_json, dump_dir
                 assert src_lang is not None
                 if model in ['ltu_as', 'salmonn', 'qwen_audio']:
                     instruction_modifier = f' in {LANGUAGES[src_lang].capitalize()}'
-                elif model == 'wavllm':
-                    if task == 'st':
-                        instruction_modifier = f' from {LANGUAGES[src_lang].capitalize()}'
-                    else:
-                        instruction_modifier = f' in {LANGUAGES[src_lang].capitalize()}'
-                elif model == 'bestow':
-                    instruction_modifier = f' {LANGUAGES[src_lang].capitalize()}'
 
             output_dict = format_data(id_scp, audio_path, task, model, dataset, text, src_lang, tgt_lang, instruction=instruction, instruction_modifier=instruction_modifier, separators=separators.split())
             output_list.append(output_dict)
@@ -394,7 +303,7 @@ if __name__ == "__main__":
     parser.add_argument(
         "--model",
         type=str,
-        choices=['ltu_as', 'salmonn', 'qwen_audio', 'bestow', 'wavllm', 'whisper'],
+        choices=['ltu_as', 'salmonn', 'qwen_audio', 'whisper'],
         help="Model to evaluate",
     )
     parser.add_argument(

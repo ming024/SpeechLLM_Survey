@@ -38,19 +38,6 @@ elif [[ "$model" == "ltu_as" ]]; then
     vicuna_path=./models/ltu/pretrained_mdls/vicuna_ltuas/
     eval_mdl_path=./models/ltu/pretrained_mdls/ltuas_long_noqa_a6.bin
     whisper_feat_mdl_path=./models/ltu/pretrained_mdls/large-v1.pt
-elif [[ "$model" == "wavllm" ]]; then
-    source ~/.bashrc
-    conda activate WavLLM
-    ckpt_path=${PWD}/models/SpeechT5/WavLLM/final.pt
-    result_file_format=txt
-elif [[ "$model" == "bestow" ]]; then
-    NEMO_DIR=/ocean/projects/cis210027p/cchien1/projects/SpeechLLM/models/NeMo
-    MEGATRON_CKPT=models/NeMo/BESTOW/llm/tiny_llama.nemo
-    ALM_YAML=models/NeMo/BESTOW/crossbmg4eghel_mored_lhmain3cross_oci_FC-GPT_llama_tiny_canaryset_b6s4kf-sunolong_noCC_langtemp0.5_dsettemp0.5_lr1e-4wd1e-3_CosineAnnealing_warmup2500_minlr1e-6_gbs4096_mbs16_ep200/hparams.yaml
-    ALM_CKPT=models/NeMo/BESTOW/crossbmg4eghel_mored_lhmain3cross_oci_FC-GPT_llama_tiny_canaryset_b6s4kf-sunolong_noCC_langtemp0.5_dsettemp0.5_lr1e-4wd1e-3_CosineAnnealing_warmup2500_minlr1e-6_gbs4096_mbs16_ep200/megatron_audio_gpt_peft_tuning--validation_bleu\\=50.129-step\\=60000-epoch\\=2.ckpt
-    ASR_CKPT=models/NeMo/BESTOW/am/oci_b6s4kf-sunolong_noCC_langtemp0.5_dsettemp0.5_20240126_lfbe-128_ngpus-128_mbs-360s_opt-adamw_lr-3e-4_wd-1e-3_sched-InverseSquareRootAnnealing_maxsteps-150000.release_candidate.nemo
-    batch=16
-    data_file_format=jsonl
 elif [[ "$model" == "whisper" ]]; then
     source ~/.bashrc
     conda activate whisper
@@ -148,49 +135,21 @@ for split in ${splits}; do
     echo "Evaluating ${model} on ${output_name}"
     echo "Running inference..."
 
-    # if [[ "$model" == "salmonn_7b" ]] || [[ "$model" == "salmonn_13b" ]]; then
-    #     python3 models/SALMONN/run.py --ckpt_path $ckpt_path --eval_dataset $output_name --task $task --output_dir $output_dir --vicuna_path $vicuna_path --beats_path $beats_path --use_low_resource $use_low_resource --eval_json_path $data_json_path
-    # elif [[ "$model" == *"qwen"* ]]; then
-    #     python3 models/Qwen-Audio/run.py --ckpt_path $ckpt_path --eval_dataset $output_name --task $task --output_dir $output_dir --eval_json_path $data_json_path
-    # elif [[ "$model" == "ltu_as" ]]; then
-    #     python3 models/ltu/src/ltu_as/run.py  --eval_dataset $output_name --task $task --output_dir $output_dir --base_model $vicuna_path --eval_mdl_path $eval_mdl_path --eval_json_path $data_json_path --whisper_feat_mdl_path $whisper_feat_mdl_path
-    # elif [[ "$model" == "wavllm" ]]; then
-    #     output_dir=${PWD}/${output_dir}
-    #     data_json_dir=${PWD}/${data_json_dir}
-    #     cd models/SpeechT5/WavLLM/
-    #     . run.sh $ckpt_path $output_name $data_json_dir ${output_dir}/${task}/${output_name}/
-    #     cd ../../../
-    #     mv ${output_dir}/${task}/${output_name}/generate-${output_name}.txt ${output_dir}/${task}/${output_name}/result.txt
-    # elif [[ "$model" == "bestow" ]]; then
-    #     PYTHONPATH=$NEMO_DIR:$PYTHONPATH python \
-    #         models/NeMo/run.py \
-    #         ++model.pretrained_audio_model=$ASR_CKPT \
-    #         model.restore_from_path=$MEGATRON_CKPT \
-    #         model.peft.restore_from_path="$ALM_CKPT" \
-    #         model.peft.restore_from_hparams_path=$ALM_YAML \
-    #         model.data.test_ds.manifest_filepath=[${data_json_path}] \
-    #         model.data.test_ds.names=[${output_name}] \
-    #         model.global_batch_size=$batch \
-    #         model.micro_batch_size=$batch \
-    #         ++model.data.test_ds.drop_last=False \
-    #         model.data.test_ds.micro_batch_size=$batch \
-    #         model.data.test_ds.global_batch_size=$batch \
-    #         ++inference.greedy=True \
-    #         ++inference.outfile_path=${output_dir}/${task}/${output_name}/result.json \
-    #         model.data.test_ds.tokens_to_generate=128
-    # elif [[ "$model" == "whisper" ]]; then
-    #     python3 models/whisper/run.py --eval_dataset $output_name --task $task --output_dir $output_dir --eval_json_path $data_json_path --save_ref $save_ref
-    # elif [[ "$model" == "whisper-llama" ]]; then
-    #     python3 models/whisper-llama/run.py --eval_dataset $output_name --task $task --output_dir $output_dir --eval_json_path $data_json_path
-    # fi
+    if [[ "$model" == "salmonn_7b" ]] || [[ "$model" == "salmonn_13b" ]]; then
+        python3 models/SALMONN/run.py --ckpt_path $ckpt_path --eval_dataset $output_name --task $task --output_dir $output_dir --vicuna_path $vicuna_path --beats_path $beats_path --use_low_resource $use_low_resource --eval_json_path $data_json_path
+    elif [[ "$model" == *"qwen"* ]]; then
+        python3 models/Qwen-Audio/run.py --ckpt_path $ckpt_path --eval_dataset $output_name --task $task --output_dir $output_dir --eval_json_path $data_json_path
+    elif [[ "$model" == "ltu_as" ]]; then
+        python3 models/ltu/src/ltu_as/run.py  --eval_dataset $output_name --task $task --output_dir $output_dir --base_model $vicuna_path --eval_mdl_path $eval_mdl_path --eval_json_path $data_json_path --whisper_feat_mdl_path $whisper_feat_mdl_path
+    elif [[ "$model" == "whisper" ]]; then
+        python3 models/whisper/run.py --eval_dataset $output_name --task $task --output_dir $output_dir --eval_json_path $data_json_path --save_ref $save_ref
+    elif [[ "$model" == "whisper-llama" ]]; then
+        python3 models/whisper-llama/run.py --eval_dataset $output_name --task $task --output_dir $output_dir --eval_json_path $data_json_path
+    fi
 
 
     echo "Post-processing LLM outputs"
-    if [[ "$model" == "wavllm" ]]; then
-        source ~/.bashrc
-        conda activate whisper-llama
-        python3 post_process_text.py --eval_dataset $output_name --task $task  --output_dir $output_dir  --save_ref $save_ref --eval_data_file ${data_json_dir}/${output_name}.tsv --result_file_format $result_file_format --use_llama true
-    elif [[ "$model" == "whisper-llama" ]]; then
+    if [[ "$model" == "whisper-llama" ]]; then
         source ~/.bashrc
         conda activate whisper-llama
         python3 post_process_text.py --eval_dataset $output_name --task $task  --output_dir $output_dir  --save_ref $save_ref --eval_data_file ${data_json_dir}/${output_name}.json --result_file_format $result_file_format --use_llama true
